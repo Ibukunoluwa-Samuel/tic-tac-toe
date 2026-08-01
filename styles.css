@@ -34,11 +34,18 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
 .wallpaper::after { content: ""; position: absolute; inset: 0; background: rgba(7, 11, 12, .22); }
 
 .app-shell { width: min(1240px, calc(100% - 64px)); min-height: 100vh; margin: auto; display: flex; flex-direction: column; }
-.topbar { height: 92px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--dim); }
+.topbar { min-height: 92px; display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px solid var(--dim); padding: 16px 0; }
+.topbar-controls { display: flex; align-items: center; gap: 18px; }
 .brand { display: inline-flex; align-items: center; gap: 11px; color: var(--ink); text-decoration: none; font: 500 14px var(--font-mono); letter-spacing: .08em; }
 .brand-mark { display: grid; place-items: center; width: 24px; height: 24px; border: 1px solid var(--accent); color: var(--accent); font-size: 19px; line-height: 1; }
 .topbar-note, .eyebrow, .footer, .score-label { font: 500 10px var(--font-mono); letter-spacing: .16em; color: var(--muted); }
 .live-dot { display: inline-block; width: 6px; height: 6px; margin-right: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 12px var(--accent); }
+
+.view-tabs { display: inline-flex; padding: 4px; border: 1px solid var(--line); background: rgba(0, 0, 0, .22); }
+.view-tab { border: 0; padding: 10px 14px; background: transparent; color: var(--muted); cursor: pointer; font: 500 10px var(--font-mono); letter-spacing: .08em; }
+.view-tab.active { background: var(--accent); color: #121718; }
+.view-panel { display: none; }
+.view-panel.active { display: block; }
 
 .game-layout { flex: 1; display: grid; grid-template-columns: .83fr 1.17fr; align-items: center; gap: clamp(70px, 10vw, 160px); padding: 70px 5.5% 90px; }
 .intro-panel { max-width: 340px; }
@@ -80,11 +87,30 @@ h2 { margin: 0; font-size: 24px; font-weight: 500; letter-spacing: -.04em; }
 .text-button { padding: 0; border: 0; background: transparent; color: var(--ink); cursor: pointer; font: 10px var(--font-mono); letter-spacing: .08em; }
 .text-button span { color: var(--accent); font-size: 14px; }
 .text-button:hover { color: var(--accent); }
+
+.guess-shell { min-height: calc(100vh - 220px); display: grid; place-items: center; padding: 48px 0 56px; }
+.guess-card { width: min(100%, 560px); padding: clamp(24px, 4vw, 36px); background: var(--surface); border: 1px solid var(--line); box-shadow: 18px 18px 0 rgba(0, 0, 0, .2); }
+.guess-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 26px; }
+.guess-copy { margin-top: 10px; color: var(--muted); line-height: 1.6; }
+.guess-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 20px; }
+.stat-pill { padding: 14px; border: 1px solid var(--line); background: rgba(0, 0, 0, .2); }
+.stat-pill span { display: block; margin-bottom: 6px; color: var(--muted); font: 500 9px var(--font-mono); letter-spacing: .12em; text-transform: uppercase; }
+.stat-pill strong { font-size: 24px; letter-spacing: -.04em; }
+.guess-feedback { min-height: 58px; margin-bottom: 18px; padding: 14px 16px; border: 1px solid var(--line); background: rgba(0, 0, 0, .2); color: var(--ink); line-height: 1.6; }
+.guess-feedback.success { border-color: rgba(229, 255, 99, .38); color: var(--accent); }
+.guess-feedback.warn { border-color: rgba(255, 128, 102, .4); color: var(--warm); }
+.guess-form { display: flex; gap: 12px; margin-bottom: 16px; }
+.guess-form input { flex: 1; border: 1px solid var(--line); background: rgba(0, 0, 0, .26); color: var(--ink); padding: 13px 14px; font: 500 16px var(--font-display); }
+.guess-form input::placeholder { color: var(--muted); }
+.guess-submit { border: 0; padding: 13px 18px; background: var(--accent); color: #121718; cursor: pointer; font: 600 12px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; }
+.guess-hint-row { display: flex; justify-content: space-between; align-items: center; color: var(--muted); font: 10px var(--font-mono); letter-spacing: .08em; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 .footer { display: flex; justify-content: space-between; padding: 22px 0; border-top: 1px solid var(--dim); font-size: 9px; }
 
 @media (max-width: 760px) {
   .app-shell { width: min(100% - 36px, 520px); }
-  .topbar { height: 72px; }
+  .topbar { flex-direction: column; align-items: flex-start; }
+  .topbar-controls { width: 100%; justify-content: space-between; }
   .topbar-note { display: none; }
   .game-layout { display: block; padding: 52px 0 58px; }
   .intro-panel { max-width: none; }
@@ -94,5 +120,9 @@ h2 { margin: 0; font-size: 24px; font-weight: 500; letter-spacing: -.04em; }
   .scoreboard { margin-bottom: 48px; }
   .play-panel { width: 100%; }
   .board-wrap { padding: 9%; }
+  .guess-shell { min-height: auto; padding: 28px 0 40px; }
+  .guess-stats { grid-template-columns: 1fr; }
+  .guess-form { flex-direction: column; }
+  .guess-hint-row { flex-direction: column; align-items: flex-start; gap: 8px; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; } }

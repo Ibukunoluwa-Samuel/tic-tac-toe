@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#111518">
-  <title>Gridlock | Tic Tac Toe</title>
+  <title>Gridlock | Arcade Tabs</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -18,42 +18,93 @@
         <span class="brand-mark">+</span>
         <span>GRIDLOCK</span>
       </a>
-      <div class="topbar-note"><span class="live-dot"></span> LOCAL GAME / NO SCOREBOARD</div>
+      <div class="topbar-controls">
+        <div class="view-tabs" role="tablist" aria-label="Choose a game">
+          <button class="view-tab active" data-view="ttt" type="button">Tic Tac Toe</button>
+          <button class="view-tab" data-view="guess" type="button">Number Guess</button>
+        </div>
+        <div class="topbar-note"><span class="live-dot"></span> LOCAL GAME / NO SCOREBOARD</div>
+      </div>
     </header>
 
-    <section class="game-layout" aria-label="Tic tac toe game">
-      <aside class="intro-panel">
-        <p class="eyebrow">A SMALL GAME OF</p>
-        <h1>Three in<br><em>a row.</em></h1>
-        <p class="intro-copy">Read the grid. Find the opening. Leave your mark.</p>
-        <div class="mode-switch" role="group" aria-label="Choose game mode">
-          <button class="mode-button active" data-mode="cpu" type="button">VS CPU</button>
-          <button class="mode-button" data-mode="local" type="button">2 PLAYERS</button>
-        </div>
-        <div class="scoreboard" aria-label="Scoreboard">
-          <div class="score-item score-x"><span class="score-label">YOU <b class="player-x">X</b></span><strong id="scoreX">0</strong></div>
-          <div class="score-divider">:</div>
-          <div class="score-item score-o"><span class="score-label"><b class="player-o">O</b> <span id="opponentLabel">CPU</span></span><strong id="scoreO">0</strong></div>
-        </div>
-      </aside>
-
-      <section class="play-panel">
-        <div class="round-header">
-          <div>
-            <p class="eyebrow">ROUND <span id="roundNumber">01</span></p>
-            <h2 id="statusText">Your move</h2>
+    <section class="view-panel active" data-view-panel="ttt" aria-label="Tic tac toe game">
+      <section class="game-layout">
+        <aside class="intro-panel">
+          <p class="eyebrow">A SMALL GAME OF</p>
+          <h1>Three in<br><em>a row.</em></h1>
+          <p class="intro-copy">Read the grid. Find the opening. Leave your mark.</p>
+          <div class="mode-switch" role="group" aria-label="Choose game mode">
+            <button class="mode-button active" data-mode="cpu" type="button">VS CPU</button>
+            <button class="mode-button" data-mode="local" type="button">2 PLAYERS</button>
           </div>
-          <button class="icon-button" id="newGameButton" type="button" aria-label="Start a new game" title="New game">↻</button>
-        </div>
-        <div class="board-wrap">
-          <div class="board" id="board" role="grid" aria-label="Tic tac toe board"></div>
-          <div class="winner-line" id="winnerLine" aria-hidden="true"></div>
-        </div>
-        <div class="play-footer">
-          <span id="turnHint">X starts every round</span>
-          <button class="text-button" id="resetScoreButton" type="button">Reset score <span>↗</span></button>
-        </div>
+          <div class="scoreboard" aria-label="Scoreboard">
+            <div class="score-item score-x"><span class="score-label">YOU <b class="player-x">X</b></span><strong id="scoreX">0</strong></div>
+            <div class="score-divider">:</div>
+            <div class="score-item score-o"><span class="score-label"><b class="player-o">O</b> <span id="opponentLabel">CPU</span></span><strong id="scoreO">0</strong></div>
+          </div>
+        </aside>
+
+        <section class="play-panel">
+          <div class="round-header">
+            <div>
+              <p class="eyebrow">ROUND <span id="roundNumber">01</span></p>
+              <h2 id="statusText">Your move</h2>
+            </div>
+            <button class="icon-button" id="newGameButton" type="button" aria-label="Start a new game" title="New game">↻</button>
+          </div>
+          <div class="board-wrap">
+            <div class="board" id="board" role="grid" aria-label="Tic tac toe board"></div>
+            <div class="winner-line" id="winnerLine" aria-hidden="true"></div>
+          </div>
+          <div class="play-footer">
+            <span id="turnHint">X starts every round</span>
+            <button class="text-button" id="resetScoreButton" type="button">Reset score <span>↗</span></button>
+          </div>
+        </section>
       </section>
+    </section>
+
+    <section class="view-panel" data-view-panel="guess" aria-labelledby="guessTitle">
+      <div class="guess-shell">
+        <div class="guess-card">
+          <div class="guess-header">
+            <div>
+              <p class="eyebrow">A QUICK MIND GAME</p>
+              <h2 id="guessTitle">Number Guess</h2>
+              <p class="guess-copy">Pick a number between 1 and 100. I’ll give you hints until you crack it.</p>
+            </div>
+            <button class="icon-button" id="guessNewGameButton" type="button" aria-label="Start a new guessing game" title="New game">↻</button>
+          </div>
+
+          <div class="guess-stats" aria-label="Guessing game stats">
+            <div class="stat-pill">
+              <span>Attempts</span>
+              <strong id="guessAttempts">0</strong>
+            </div>
+            <div class="stat-pill">
+              <span>Wins</span>
+              <strong id="guessWins">0</strong>
+            </div>
+            <div class="stat-pill">
+              <span>Best</span>
+              <strong id="guessBest">—</strong>
+            </div>
+          </div>
+
+          <div class="guess-feedback" id="guessFeedback">A new secret number is waiting. Enter your first guess.</div>
+
+          <form class="guess-form" id="guessForm">
+            <label class="sr-only" for="guessInput">Enter your guess</label>
+            <input id="guessInput" name="guess" type="number" min="1" max="100" inputmode="numeric" placeholder="Enter a number" autocomplete="off">
+            <button class="guess-submit" type="submit">Guess</button>
+          </form>
+
+          <div class="guess-hint-row">
+            <span class="guess-range">Range: 1 - 100</span>
+            <button class="text-button" id="guessResetButton" type="button">Reset stats <span>↗</span></button>
+          </div>
+        </div>
+      </div>
     </section>
 
     <footer class="footer"><span>GRIDLOCK 2026</span><span>MAKE YOUR MOVE</span></footer>
