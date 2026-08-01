@@ -7,6 +7,14 @@ const opponentLabel = document.querySelector('#opponentLabel');
 const turnHint = document.querySelector('#turnHint');
 const winnerLine = document.querySelector('#winnerLine');
 const modeButtons = document.querySelectorAll('.mode-button');
+const viewButtons = document.querySelectorAll('.view-tab');
+const viewPanels = document.querySelectorAll('.view-panel');
+const guessInput = document.querySelector('#guessInput');
+const guessForm = document.querySelector('#guessForm');
+const guessFeedback = document.querySelector('#guessFeedback');
+const guessAttempts = document.querySelector('#guessAttempts');
+const guessWins = document.querySelector('#guessWins');
+const guessBest = document.querySelector('#guessBest');
 
 const winningLines = [
   [0, 1, 2], [3, 4, 5], [6, 7, 8],
@@ -28,6 +36,10 @@ let gameOver = false;
 let round = 1;
 let scores = { X: 0, O: 0 };
 let cpuTimer;
+let secretNumber = null;
+let attempts = 0;
+let wins = 0;
+let bestScore = null;
 
 function renderBoard() {
   boardElement.innerHTML = '';
@@ -173,9 +185,78 @@ function setMode(nextMode) {
   startRound();
 }
 
+function setActiveView(view) {
+  viewButtons.forEach(button => button.classList.toggle('active', button.dataset.view === view));
+  viewPanels.forEach(panel => panel.classList.toggle('active', panel.dataset.viewPanel === view));
+}
+
+function setGuessFeedback(message, type = '') {
+  guessFeedback.textContent = message;
+  guessFeedback.className = `guess-feedback${type ? ` ${type}` : ''}`;
+}
+
+function updateGuessStats() {
+  guessAttempts.textContent = attempts;
+  guessWins.textContent = wins;
+  guessBest.textContent = bestScore === null ? '—' : bestScore;
+}
+
+function startGuessGame() {
+  secretNumber = Math.floor(Math.random() * 100) + 1;
+  attempts = 0;
+  guessInput.value = '';
+  guessInput.disabled = false;
+  guessInput.focus();
+  updateGuessStats();
+  setGuessFeedback('A new secret number is waiting. Enter your first guess.');
+}
+
+function resetGuessStats() {
+  wins = 0;
+  bestScore = null;
+  updateGuessStats();
+}
+
 document.querySelector('#newGameButton').addEventListener('click', () => { round += 1; startRound(); });
 document.querySelector('#resetScoreButton').addEventListener('click', () => { scores = { X: 0, O: 0 }; updateScores(); });
+document.querySelector('#guessNewGameButton').addEventListener('click', startGuessGame);
+document.querySelector('#guessResetButton').addEventListener('click', () => {
+  resetGuessStats();
+  startGuessGame();
+});
 modeButtons.forEach(button => button.addEventListener('click', () => setMode(button.dataset.mode)));
+viewButtons.forEach(button => button.addEventListener('click', () => setActiveView(button.dataset.view)));
+guessForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const rawValue = guessInput.value.trim();
+  if (!rawValue) {
+    setGuessFeedback('Please enter a number before guessing.', 'warn');
+    return;
+  }
+
+  const guess = Number(rawValue);
+  if (!Number.isInteger(guess) || guess < 1 || guess > 100) {
+    setGuessFeedback('Enter a whole number between 1 and 100.', 'warn');
+    return;
+  }
+
+  attempts += 1;
+  updateGuessStats();
+
+  if (guess === secretNumber) {
+    wins += 1;
+    bestScore = bestScore === null ? attempts : Math.min(bestScore, attempts);
+    updateGuessStats();
+    setGuessFeedback(`Correct! ${secretNumber} was the secret number.`, 'success');
+    guessInput.disabled = true;
+    return;
+  }
+
+  if (guess < secretNumber) setGuessFeedback('Too low — try a higher number.', '');
+  else setGuessFeedback('Too high — try a lower number.', '');
+  guessInput.value = '';
+  guessInput.focus();
+});
 
 let wallpaperIndex = 0;
 setInterval(() => {
@@ -183,4 +264,6 @@ setInterval(() => {
   document.querySelector('.wallpaper').style.backgroundImage = `linear-gradient(90deg, rgba(10, 16, 17, .88), rgba(10, 16, 17, .54)), url("${wallpapers[wallpaperIndex]}")`;
 }, 8000);
 
+setActiveView('ttt');
 startRound();
+startGuessGame();
