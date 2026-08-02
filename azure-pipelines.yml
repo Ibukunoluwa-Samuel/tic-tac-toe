@@ -37,11 +37,6 @@ jobs:
       artifactName: 'arcade-app'
       targetPath: '$(Pipeline.Workspace)/a'
 
-  - task: Bash@3
-    inputs:
-      targetType: 'inline'
-      script: 'ls -al $(Pipeline.Workspace)/a'
-
   - task: ArchiveFiles@2
     inputs:
       rootFolderOrFile: '$(Pipeline.Workspace)/a'
@@ -50,10 +45,6 @@ jobs:
       archiveFile: 'arcade-app'
       replaceExistingArchive: true
       quiet: true
-  - task: Bash@3
-    inputs:
-      targetType: 'inline'
-      script: 'ls -al $(Pipeline.Workspace)/s'
 
 
   - task: DownloadSecureFile@1
