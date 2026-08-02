@@ -5,14 +5,14 @@
 
 trigger:
 - main
+pool: 
+  name: 'Azure Pipelines'
+  vmImage: ubuntu-latest
 
 jobs:
 - job: build
-  pool:
-    vmImage: ubuntu-latest
-
   steps:
-  - checkout: true
+  - checkout: self
   - task: PublishPipelineArtifact@1
     inputs:
       targetPath: '$(Pipeline.Workspace)'
@@ -20,8 +20,6 @@ jobs:
       publishLocation: 'pipeline'
 
 - job: deploy
-  pool: 
-    vmImage: ubuntu-latest
   dependsOn: build
 
   steps:
@@ -30,9 +28,17 @@ jobs:
       buildType: 'current'
       artifactName: 'arcade-app'
       targetPath: '$(Pipeline.Workspace)'
+
+  - task: Bash@3
+    inputs:
+      targetType: 'inline'
+      script: 'ls -alR $(Pipeline.Workspace)'
+
   - task: AzureRmWebAppDeployment@5
     inputs:
       ConnectionType: 'PublishProfile'
       PublishProfilePath: '$(System.DefaultWorkingDirectory)/**/*.pubxml'
       PublishProfilePassword: '$(app_publish_profile)'
       packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
+
+  
