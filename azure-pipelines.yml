@@ -13,22 +13,13 @@ jobs:
 - job: build
   steps:
   - checkout: self
-  
-  - task: ArchiveFiles@2
-    inputs:
-      rootFolderOrFile: '$(Pipeline.Workspace)'
-      includeRootFolder: false
-      archiveType: 'zip'
-      archiveFile: 'arcade-app'
-      replaceExistingArchive: true
-      quiet: true
   - task: Bash@3
     inputs:
       targetType: 'inline'
-      script: 'ls -al $(Pipeline.Workspace)'
+      script: 'ls -al $(Pipeline.Workspace)/s'
   - task: PublishPipelineArtifact@1
     inputs:
-      targetPath: '$(Pipeline.Workspace)'
+      targetPath: '$(Pipeline.Workspace)/s'
       artifact: 'arcade-app'
       publishLocation: 'pipeline'
 
@@ -41,18 +32,38 @@ jobs:
     inputs:
       buildType: 'current'
       artifactName: 'arcade-app'
-      targetPath: '$(Pipeline.Workspace)'
+      targetPath: '$(Pipeline.Workspace)/a'
 
   - task: Bash@3
     inputs:
       targetType: 'inline'
-      script: 'ls -alR $(Pipeline.Workspace)'
+      script: 'ls -al $(Pipeline.Workspace)/a'
+
+  - task: ArchiveFiles@2
+    inputs:
+      rootFolderOrFile: '$(Pipeline.Workspace)/a'
+      includeRootFolder: false
+      archiveType: 'zip'
+      archiveFile: 'arcade-app'
+      replaceExistingArchive: true
+      quiet: true
+  - task: Bash@3
+    inputs:
+      targetType: 'inline'
+      script: 'ls -al $(Pipeline.Workspace)/a'
+
+
+  - task: DownloadSecureFile@1
+    name: downloadPub
+    inputs:
+      secureFile: '$(arcade-app-pub-file)'
+      retryCount: '3'
 
   - task: AzureRmWebAppDeployment@5
     inputs:
       ConnectionType: 'PublishProfile'
-      PublishProfilePath: '$(System.DefaultWorkingDirectory)/**/*.pubxml'
-      PublishProfilePassword: '$(app_publish_profile)'
+      PublishProfilePath: '$(dowloadPub.secureFilePath)'
+      PublishProfilePassword: '$(app_publish_profile_password)'
       packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
 
   
