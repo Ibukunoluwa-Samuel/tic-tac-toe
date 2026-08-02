@@ -13,6 +13,19 @@ jobs:
 - job: build
   steps:
   - checkout: self
+  
+  - task: ArchiveFiles@2
+    inputs:
+      rootFolderOrFile: '$(Pipeline.Workspace)'
+      includeRootFolder: false
+      archiveType: 'zip'
+      archiveFile: 'arcade-app'
+      replaceExistingArchive: true
+      quiet: true
+  - task: Bash@3
+    inputs:
+      targetType: 'inline'
+      script: 'ls -al $(Pipeline.Workspace)'
   - task: PublishPipelineArtifact@1
     inputs:
       targetPath: '$(Pipeline.Workspace)'
@@ -23,6 +36,7 @@ jobs:
   dependsOn: build
 
   steps:
+  - checkout: none
   - task: DownloadPipelineArtifact@2
     inputs:
       buildType: 'current'
