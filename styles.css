@@ -104,6 +104,18 @@ h2 { margin: 0; font-size: 24px; font-weight: 500; letter-spacing: -.04em; }
 .guess-form input::placeholder { color: var(--muted); }
 .guess-submit { border: 0; padding: 13px 18px; background: var(--accent); color: #121718; cursor: pointer; font: 600 12px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; }
 .guess-hint-row { display: flex; justify-content: space-between; align-items: center; color: var(--muted); font: 10px var(--font-mono); letter-spacing: .08em; }
+.word-shell { min-height: calc(100vh - 220px); display: grid; place-items: center; padding: 48px 0 56px; }
+.word-card { width: min(100%, 560px); padding: clamp(24px, 4vw, 36px); background: var(--surface); border: 1px solid var(--line); box-shadow: 18px 18px 0 rgba(0, 0, 0, .2); }
+.word-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 26px; }
+.word-copy { margin-top: 10px; color: var(--muted); line-height: 1.6; }
+.word-clue { min-height: 58px; margin-bottom: 18px; padding: 14px 16px; border: 1px solid var(--line); background: rgba(0, 0, 0, .2); color: var(--ink); line-height: 1.6; }
+.word-clue.success { border-color: rgba(229, 255, 99, .38); color: var(--accent); }
+.word-clue.warn { border-color: rgba(255, 128, 102, .4); color: var(--warm); }
+.word-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 20px; }
+.word-stats .stat-pill { padding: 14px; border: 1px solid var(--line); background: rgba(0, 0, 0, .2); }
+.word-feedback { min-height: 58px; margin-bottom: 18px; padding: 14px 16px; border: 1px solid var(--line); background: rgba(0, 0, 0, .2); color: var(--ink); line-height: 1.6; }
+.word-feedback.success { border-color: rgba(229, 255, 99, .38); color: var(--accent); }
+.word-feedback.warn { border-color: rgba(255, 128, 102, .4); color: var(--warm); }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 .footer { display: flex; justify-content: space-between; padding: 22px 0; border-top: 1px solid var(--dim); font-size: 9px; }
 
@@ -122,6 +134,8 @@ h2 { margin: 0; font-size: 24px; font-weight: 500; letter-spacing: -.04em; }
   .board-wrap { padding: 9%; }
   .guess-shell { min-height: auto; padding: 28px 0 40px; }
   .guess-stats { grid-template-columns: 1fr; }
+  .word-shell { min-height: auto; padding: 28px 0 40px; }
+  .word-stats { grid-template-columns: 1fr; }
   .guess-form { flex-direction: column; }
   .guess-hint-row { flex-direction: column; align-items: flex-start; gap: 8px; }
 }

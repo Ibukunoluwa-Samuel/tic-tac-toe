@@ -15,6 +15,12 @@ const guessFeedback = document.querySelector('#guessFeedback');
 const guessAttempts = document.querySelector('#guessAttempts');
 const guessWins = document.querySelector('#guessWins');
 const guessBest = document.querySelector('#guessBest');
+const wordInput = document.querySelector('#wordInput');
+const wordForm = document.querySelector('#wordForm');
+const wordFeedback = document.querySelector('#wordFeedback');
+const wordAttempts = document.querySelector('#wordAttempts');
+const wordWins = document.querySelector('#wordWins');
+const wordBest = document.querySelector('#wordBest');
 
 const winningLines = [
   [0, 1, 2], [3, 4, 5], [6, 7, 8],
@@ -40,6 +46,23 @@ let secretNumber = null;
 let attempts = 0;
 let wins = 0;
 let bestScore = null;
+let wordBank = ['glow', 'spare', 'ocean', 'stone', 'dream', 'ember', 'cider', 'beach', 'night', 'planet'];
+let currentWord = '';
+let currentWordHint = '';
+let wordAttemptCount = 0;
+let wordWinCount = 0;
+let wordBestScore = null;
+
+function buildWordHint(word) {
+  const normalized = word.toLowerCase();
+  const length = normalized.length;
+  const firstLetter = normalized[0];
+  const lastLetter = normalized[length - 1];
+  const middleIndex = Math.floor(length / 2);
+  const middleLetter = normalized[middleIndex];
+
+  return `First letter: "${firstLetter}" • Middle letter: "${middleLetter}" • Last letter: "${lastLetter}" • Length: ${length} letters`;
+}
 
 function renderBoard() {
   boardElement.innerHTML = '';
@@ -217,46 +240,128 @@ function resetGuessStats() {
   updateGuessStats();
 }
 
-document.querySelector('#newGameButton').addEventListener('click', () => { round += 1; startRound(); });
-document.querySelector('#resetScoreButton').addEventListener('click', () => { scores = { X: 0, O: 0 }; updateScores(); });
-document.querySelector('#guessNewGameButton').addEventListener('click', startGuessGame);
-document.querySelector('#guessResetButton').addEventListener('click', () => {
-  resetGuessStats();
-  startGuessGame();
-});
-modeButtons.forEach(button => button.addEventListener('click', () => setMode(button.dataset.mode)));
-viewButtons.forEach(button => button.addEventListener('click', () => setActiveView(button.dataset.view)));
-guessForm.addEventListener('submit', (event) => {
-  event.preventDefault();
-  const rawValue = guessInput.value.trim();
-  if (!rawValue) {
-    setGuessFeedback('Please enter a number before guessing.', 'warn');
-    return;
-  }
+function setWordFeedback(message, type = '') {
+  wordFeedback.textContent = message;
+  wordFeedback.className = `word-feedback${type ? ` ${type}` : ''}`;
+}
 
-  const guess = Number(rawValue);
-  if (!Number.isInteger(guess) || guess < 1 || guess > 100) {
-    setGuessFeedback('Enter a whole number between 1 and 100.', 'warn');
-    return;
-  }
+function updateWordStats() {
+  wordAttempts.textContent = wordAttemptCount;
+  wordWins.textContent = wordWinCount;
+  wordBest.textContent = wordBestScore === null ? '—' : wordBestScore;
+}
 
-  attempts += 1;
-  updateGuessStats();
+function startWordGame() {
+  const randomWord = wordBank[Math.floor(Math.random() * wordBank.length)];
+  currentWord = randomWord;
+  currentWordHint = buildWordHint(randomWord);
+  wordAttemptCount = 0;
+  wordInput.value = '';
+  wordInput.disabled = false;
+  wordInput.focus();
+  updateWordStats();
+  setWordFeedback(`Hint: ${currentWordHint}`);
+}
 
-  if (guess === secretNumber) {
-    wins += 1;
-    bestScore = bestScore === null ? attempts : Math.min(bestScore, attempts);
+function resetWordStats() {
+  wordWinCount = 0;
+  wordBestScore = null;
+  updateWordStats();
+}
+
+function initTicTacToe() {
+  if (!boardElement || !statusText || !roundNumber || !scoreXElement || !scoreOElement || !opponentLabel || !turnHint || !winnerLine || !modeButtons.length) return;
+
+  document.querySelector('#newGameButton').addEventListener('click', () => { round += 1; startRound(); });
+  document.querySelector('#resetScoreButton').addEventListener('click', () => { scores = { X: 0, O: 0 }; updateScores(); });
+  modeButtons.forEach(button => button.addEventListener('click', () => setMode(button.dataset.mode)));
+  startRound();
+}
+
+function initGuessGame() {
+  if (!guessInput || !guessForm || !guessFeedback || !guessAttempts || !guessWins || !guessBest) return;
+
+  document.querySelector('#guessNewGameButton').addEventListener('click', startGuessGame);
+  document.querySelector('#guessResetButton').addEventListener('click', () => {
+    resetGuessStats();
+    startGuessGame();
+  });
+  guessForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const rawValue = guessInput.value.trim();
+    if (!rawValue) {
+      setGuessFeedback('Please enter a number before guessing.', 'warn');
+      return;
+    }
+
+    const guess = Number(rawValue);
+    if (!Number.isInteger(guess) || guess < 1 || guess > 100) {
+      setGuessFeedback('Enter a whole number between 1 and 100.', 'warn');
+      return;
+    }
+
+    attempts += 1;
     updateGuessStats();
-    setGuessFeedback(`Correct! ${secretNumber} was the secret number.`, 'success');
-    guessInput.disabled = true;
-    return;
-  }
 
-  if (guess < secretNumber) setGuessFeedback('Too low — try a higher number.', '');
-  else setGuessFeedback('Too high — try a lower number.', '');
-  guessInput.value = '';
-  guessInput.focus();
-});
+    if (guess === secretNumber) {
+      wins += 1;
+      bestScore = bestScore === null ? attempts : Math.min(bestScore, attempts);
+      updateGuessStats();
+      setGuessFeedback(`Correct! ${secretNumber} was the secret number.`, 'success');
+      guessInput.disabled = true;
+      return;
+    }
+
+    if (guess < secretNumber) setGuessFeedback('Too low — try a higher number.', '');
+    else setGuessFeedback('Too high — try a lower number.', '');
+    guessInput.value = '';
+    guessInput.focus();
+  });
+  startGuessGame();
+}
+
+function initWordGame() {
+  if (!wordInput || !wordForm || !wordFeedback || !wordAttempts || !wordWins || !wordBest) return;
+
+  document.querySelector('#wordNewGameButton').addEventListener('click', startWordGame);
+  document.querySelector('#wordResetButton').addEventListener('click', () => {
+    resetWordStats();
+    startWordGame();
+  });
+  wordForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const rawValue = wordInput.value.trim().toLowerCase();
+    if (!rawValue) {
+      setWordFeedback('Type a word before guessing.', 'warn');
+      return;
+    }
+
+    wordAttemptCount += 1;
+    updateWordStats();
+
+    if (rawValue === currentWord) {
+      wordWinCount += 1;
+      wordBestScore = wordBestScore === null ? wordAttemptCount : Math.min(wordBestScore, wordAttemptCount);
+      updateWordStats();
+      setWordFeedback(`Correct! ${currentWord.toUpperCase()} was the word.`, 'success');
+      wordInput.disabled = true;
+      return;
+    }
+
+    setWordFeedback(`Not that one. Hint: ${currentWordHint}`, '');
+    wordInput.value = '';
+    wordInput.focus();
+  });
+  startWordGame();
+}
+
+function initViewTabs() {
+  if (!viewButtons.length || !viewPanels.length) return;
+  viewButtons.forEach((button) => {
+    button.addEventListener('click', () => setActiveView(button.dataset.view));
+  });
+  setActiveView('ttt');
+}
 
 let wallpaperIndex = 0;
 setInterval(() => {
@@ -264,6 +369,7 @@ setInterval(() => {
   document.querySelector('.wallpaper').style.backgroundImage = `linear-gradient(90deg, rgba(10, 16, 17, .88), rgba(10, 16, 17, .54)), url("${wallpapers[wallpaperIndex]}")`;
 }, 8000);
 
-setActiveView('ttt');
-startRound();
-startGuessGame();
+initViewTabs();
+initTicTacToe();
+initGuessGame();
+initWordGame();
