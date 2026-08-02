@@ -22,6 +22,7 @@
         <div class="view-tabs" role="tablist" aria-label="Choose a game">
           <button class="view-tab active" data-view="ttt" type="button">Tic Tac Toe</button>
           <button class="view-tab" data-view="guess" type="button">Number Guess</button>
+          <button class="view-tab" data-view="word" type="button">Word Game</button>
         </div>
         <div class="topbar-note"><span class="live-dot"></span> LOCAL GAME / NO SCOREBOARD</div>
       </div>
@@ -102,6 +103,49 @@
           <div class="guess-hint-row">
             <span class="guess-range">Range: 1 - 100</span>
             <button class="text-button" id="guessResetButton" type="button">Reset stats <span>↗</span></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view-panel" data-view-panel="word" aria-labelledby="wordTitle">
+      <div class="guess-shell">
+        <div class="guess-card">
+          <div class="guess-header">
+            <div>
+              <p class="eyebrow">A SIMPLE WORD CHALLENGE</p>
+              <h2 id="wordTitle">Word Match</h2>
+              <p class="guess-copy">Guess the hidden word by using the hint and your best instincts.</p>
+            </div>
+            <button class="icon-button" id="wordNewGameButton" type="button" aria-label="Start a new word game" title="New game">↻</button>
+          </div>
+
+          <div class="guess-stats" aria-label="Word game stats">
+            <div class="stat-pill">
+              <span>Attempts</span>
+              <strong id="wordAttempts">0</strong>
+            </div>
+            <div class="stat-pill">
+              <span>Wins</span>
+              <strong id="wordWins">0</strong>
+            </div>
+            <div class="stat-pill">
+              <span>Best</span>
+              <strong id="wordBest">—</strong>
+            </div>
+          </div>
+
+          <div class="guess-feedback" id="wordFeedback">A new word is ready. Enter your first guess.</div>
+
+          <form class="guess-form" id="wordForm">
+            <label class="sr-only" for="wordInput">Enter your word guess</label>
+            <input id="wordInput" name="word" type="text" placeholder="Enter a word" autocomplete="off">
+            <button class="guess-submit" type="submit">Guess</button>
+          </form>
+
+          <div class="guess-hint-row">
+            <span class="guess-range">Hint: first, middle, last letters and length are shown</span>
+            <button class="text-button" id="wordResetButton" type="button">Reset stats <span>↗</span></button>
           </div>
         </div>
       </div>
