@@ -56,7 +56,7 @@ jobs:
   - task: AzureRmWebAppDeployment@5
     inputs:
       ConnectionType: 'PublishProfile'
-      PublishProfilePath: '$(dowloadPub.secureFilePath)'
+      PublishProfilePath: '$(downloadPub.secureFilePath)'
       PublishProfilePassword: '$(app_publish_profile_password)'
       packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
 
