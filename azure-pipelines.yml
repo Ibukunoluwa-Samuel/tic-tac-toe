@@ -1,0 +1,38 @@
+# Node.js with Angular
+# Build a Node.js project that uses Angular.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+
+trigger:
+- main
+
+jobs:
+- job: build
+  pool:
+    vmImage: ubuntu-latest
+
+  steps:
+  - checkout: true
+  - task: PublishPipelineArtifact@1
+    inputs:
+      targetPath: '$(Pipeline.Workspace)'
+      artifact: 'arcade-app'
+      publishLocation: 'pipeline'
+
+- job: deploy
+  pool: 
+    vmImage: ubuntu-latest
+  dependsOn: build
+
+  steps:
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifactName: 'arcade-app'
+      targetPath: '$(Pipeline.Workspace)'
+  - task: AzureRmWebAppDeployment@5
+    inputs:
+      ConnectionType: 'PublishProfile'
+      PublishProfilePath: '$(System.DefaultWorkingDirectory)/**/*.pubxml'
+      PublishProfilePassword: '$(app_publish_profile)'
+      packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
