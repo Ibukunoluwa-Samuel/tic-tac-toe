@@ -5,12 +5,12 @@
 
 trigger:
 - main
+pool: 
+  name: 'Azure Pipelines'
+  vmImage: ubuntu-latest
 
 jobs:
 - job: build
-  pool:
-    vmImage: ubuntu-latest
-
   steps:
   - checkout: self
   - task: PublishPipelineArtifact@1
@@ -20,8 +20,6 @@ jobs:
       publishLocation: 'pipeline'
 
 - job: deploy
-  pool: 
-    vmImage: ubuntu-latest
   dependsOn: build
 
   steps:
