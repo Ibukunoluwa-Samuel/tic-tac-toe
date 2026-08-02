@@ -5,12 +5,13 @@
 
 trigger:
 - main
-pool: 
-  name: 'Azure Pipelines'
-  vmImage: ubuntu-latest
 
 jobs:
+
 - job: build
+  pool: 
+    name: 'Azure Pipelines'
+    vmImage: ubuntu-latest
   steps:
   - checkout: self
   - task: Bash@3
@@ -25,7 +26,9 @@ jobs:
 
 - job: deploy
   dependsOn: build
-
+  pool: 
+    name: 'Azure Pipelines'
+    vmImage: 'windows-latest'
   steps:
   - checkout: none
   - task: DownloadPipelineArtifact@2
@@ -50,7 +53,7 @@ jobs:
   - task: Bash@3
     inputs:
       targetType: 'inline'
-      script: 'ls -al $(Pipeline.Workspace)/a'
+      script: 'ls -al $(Pipeline.Workspace)/s'
 
 
   - task: DownloadSecureFile@1
